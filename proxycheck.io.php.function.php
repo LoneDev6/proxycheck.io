@@ -12,9 +12,8 @@
     // ------------------------------
 
     $API_Key = ""; // Supply your API key between the quotes if you have one
-    $VPN = "0"; // Change this to 1 if you wish to perform VPN Checks on your visitors
-    $TLS = "0"; // Change this to 1 to enable transport security, TLS is much slower though!
-    $TAG = "1"; // Change this to 1 to enable tagging of your queries (will show within your dashboard)
+    $TLS = "1"; // Change this to 1 to enable transport security, TLS is much slower though!
+    $TAG = "0"; // Change this to 1 to enable tagging of your queries (will show within your dashboard)
     
     // If you would like to tag this traffic with a specific description place it between the quotes.
     // Without a custom tag entered below the domain and page url will be automatically used instead.
@@ -42,7 +41,7 @@
     }
     
     // Performing the API query to proxycheck.io/v2/ using cURL
-    $ch = curl_init($Transport_Type_String . 'proxycheck.io/v2/' . $Visitor_IP . '?key=' . $API_Key . '&vpn=' . $VPN);
+    $ch = curl_init($Transport_Type_String . 'proxycheck.io/v2/' . $Visitor_IP . '?key=' . $API_Key . '&asn=1&vpn=1');
     
     $curl_options = array(
       CURLOPT_CONNECTTIMEOUT => 30,
@@ -58,19 +57,14 @@
     // Decode the JSON from our API
     $Decoded_JSON = json_decode($API_JSON_Result);
 
-    // Check if the IP we're testing is a proxy server
-    if ( isset($Decoded_JSON->$Visitor_IP->proxy) && $Decoded_JSON->$Visitor_IP->proxy == "yes" ) {
-
-      // A proxy has been detected.
-      return true;
-      
-    } else {
-      
-      // No proxy has been detected.
-      return false;
-      
+    $object = new stdClass();
+    $object->vpn = isset($Decoded_JSON->$Visitor_IP->proxy) && $Decoded_JSON->$Visitor_IP->proxy == "yes";
+    if(!$object-> vpn && isset($Decoded_JSON->$Visitor_IP->type))
+    {
+        $object->vpn = !($Decoded_JSON->$Visitor_IP->type == "Residential" || $Decoded_JSON->$Visitor_IP->type == "Wireless" || strpos($Decoded_JSON->$Visitor_IP->type, "whitelisted by") === 0);
     }
-    
+    $object->country = $Decoded_JSON->$Visitor_IP->isocode;
+    return $object;
   }
 
 ?>
