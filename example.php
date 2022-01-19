@@ -10,7 +10,7 @@
   include_once "proxycheck.io.php.function.php";
 
   // If you're using CloudFlare change $_SERVER["REMOTE_ADDR"] to $_SERVER["HTTP_CF_CONNECTING_IP"]
-  if ( proxycheck_function($_SERVER["REMOTE_ADDR"]) ) {
+  if ( proxycheck_function($_SERVER["REMOTE_ADDR"])->vpn ) {
     
     // Example of a Proxy being detected
     echo "Please turn your Proxy Server off and try our website again.";
