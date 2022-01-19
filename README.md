@@ -18,9 +18,8 @@ Near the top of the file you will see a settings section where you should popula
 // ------------------------------
     
   $API_Key = "######-######-######-######"; // Supply your API key between the quotes if you have one
-  $VPN = "0"; // Change this to 1 if you wish to perform VPN Checks on your visitors
   $TLS = "0"; // Change this to 1 to enable transport security, TLS is much slower though!
-  $TAG = "1"; // Change this to 1 to enable tagging of your queries (will show within your dashboard)
+  $TAG = "0"; // Change this to 1 to enable tagging of your queries (will show within your dashboard)
     
   // If you would like to tag this traffic with a specific description place it between the quotes.
   // Without a custom tag entered below the domain and page url will be automatically used instead.
@@ -40,7 +39,7 @@ Once you've saved the function you can add the integration to any other page on 
 include_once "proxycheck.io.php.function.php";
 
 // If you're using CloudFlare change $_SERVER["REMOTE_ADDR"] to $_SERVER["HTTP_CF_CONNECTING_IP"]
-if ( proxycheck_function($_SERVER["REMOTE_ADDR"]) ) {
+if ( proxycheck_function($_SERVER["REMOTE_ADDR"])->vpn ) {
     
   // Example of a Proxy being detected
   echo "Please turn your Proxy Server off and try our website again.";
